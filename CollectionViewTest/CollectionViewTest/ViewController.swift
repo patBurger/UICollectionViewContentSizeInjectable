@@ -14,7 +14,7 @@ class ViewController: UICollectionViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
-        flowLayout?.estimatedItemSize = CGSize(width: 20, height: 20)
+        flowLayout?.estimatedItemSize = CGSize(width: 1, height: 1)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -33,101 +33,18 @@ class ViewController: UICollectionViewController {
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 6000
+        return 20
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ContentCell.self), for: indexPath) as! ContentCell
-        cell.configue(text: "jaja", width: collectionView.bounds.width, height: 60)
+        
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ContentCell.self), for: indexPath) as! ContentCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ContentCollectionViewCell.self), for: indexPath) as! ContentCollectionViewCell
+        
+        let longText = indexPath.row % 2 == 0
+        let text = longText ? "jaja, ich hoffe das hier wird irgendwann mal zweizeilig. Ob die Constraints dann noch passen, man weiß es nicht. Ich schreibe trotzdem weiter und weiter in dieser Zeile" : "jaja"
+        cell.configue(text: text, width: collectionView.bounds.width, height: 60)
         
         return cell
-    }
-}
-
-class ContentCell: UICollectionViewCell, ContentSizeInjectable {
-    weak var contentMinXConstraint: NSLayoutConstraint?
-    
-    weak var contentMinYConstraint: NSLayoutConstraint?
-    
-    @IBOutlet weak var contentWidthConstraint: NSLayoutConstraint?
-    @IBOutlet weak var contentHeightConstraint: NSLayoutConstraint?
-    
-    @IBOutlet weak var label: UILabel!
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-//        self.translatesAutoresizingMaskIntoConstraints = false
-//        setupContentSizeConstraints()
-//        self.contentView.translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        // resetConstraints()
-    }
-    
-    func configue(text: String, width: CGFloat, height: CGFloat) {
-        // configureContentSizeConstraintsWithSize(width: width, height: height)
-        setContentWidth(width: width)
-        label.text = text
-    }
-    
-//    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-//        return layoutAttributes
-//    }
-}
-
-protocol ContentSizeInjectable: class {
-    weak var contentWidthConstraint: NSLayoutConstraint? { get set }
-    weak var contentHeightConstraint: NSLayoutConstraint? { get set }
-    
-    weak var contentMinXConstraint: NSLayoutConstraint? { get set }
-    weak var contentMinYConstraint: NSLayoutConstraint? { get set }
-}
-
-extension ContentSizeInjectable where Self: UICollectionViewCell {
-    //    enum ContentConstraintType {
-    //        case width
-    //        case height
-    //    }
-    
-    func configureContentSizeConstraintsWithSize(width: CGFloat, height: CGFloat) {
-        setupContentSizeConstraints()
-        configureWithSize(width: width, height: height)
-    }
-    
-    func configureWithSize(width: CGFloat, height: CGFloat) {
-        // -1 to prevent UICollectionViewFlowLayoutBreakForInvalidSizes
-        setContentWidth(width: width - 1)
-        // setContentHeight(height: height)
-        contentMinXConstraint = contentView.leadingAnchor.constraint(equalTo: (self as UICollectionViewCell).leadingAnchor)
-        
-        contentMinXConstraint?.isActive = true
-    }
-    
-    func resetConstraints() {
-        setupContentSizeConstraints()
-    }
-    
-    func setupContentSizeConstraints() {
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 0)
-        contentHeightConstraint = contentView.heightAnchor.constraint(equalToConstant: 0)
-        
-        
-        
-        contentWidthConstraint?.isActive = false
-        contentHeightConstraint?.isActive = false
-    }
-    
-    func setContentWidth(width: CGFloat) {
-        contentWidthConstraint?.constant = width
-        contentWidthConstraint?.isActive = width > 0
-    }
-    
-    func setContentHeight(height: CGFloat) {
-        contentHeightConstraint?.constant = height
-        contentHeightConstraint?.isActive = height > 0
     }
 }
